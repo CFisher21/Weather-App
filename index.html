@@ -1,16 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather App</title>
     <script defer src="script.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="./images/favicon.svg">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="./images/favicon.svg" />
+  </head>
+  <body>
     <div class="container">
-        <span class="description" id="description">Some Text</span>
+        <h1 id="location-heading"></h1>
+
+      <div class="today-weather-group">
+        <div class="top-group">
+          <p>Today's Weather</p>
+          <span id="todays-date"></span>
+        </div>
+          <div class="todays-weather">
+            <div class="today-group">
+              <img src="" alt="" id="today-icon" class="icon" />
+              <p id="today-desc"></p>
+              <span id="today-temp"></span>
+            </div>
+            <div class="tonight-group">
+              <img src="" alt="" id="tonight-icon" class="icon" />
+              <p id="tonight-desc"></p>
+              <span id="tonight-temp"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="current-weather">
+        <div class="current-top-group">
+            <p>Current Weather</p>
+            <span id="current-time"></span>
+        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>
