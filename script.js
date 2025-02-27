@@ -4,7 +4,7 @@ const weatherIconsPath = './images/weather-icons/'
 function fetchData() {
     const toronto = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/toronto?unitGroup=us&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json';
     const cochrane = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/cochrane%20alberta?unitGroup=metric&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json';
-    return fetch(cochrane, { mode: 'cors'})
+    return fetch(toronto, { mode: 'cors'})
         .then((response) => {
            if(!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`)
@@ -15,6 +15,18 @@ function fetchData() {
             console.log('Fetch error: ', error);
         })
 } 
+
+function locationHeading() {
+    fetchData()
+    .then(weatherData => {
+        if(weatherData) {
+            //const capitalize = weatherData.address.charAt(0).toUpperCase() + weatherData.address.slice(1).toLowerCase();
+            document.getElementById('location-heading').innerHTML = weatherData.resolvedAddress;
+        } else {
+            console.error('Error with location heading')
+        }
+    })
+}
 
 function todayWeather() {
     fetchData()
@@ -38,18 +50,6 @@ function todayWeather() {
            
         } else {
             console.error('Error with weather data')
-        }
-    })
-}
-
-function locationHeading() {
-    fetchData()
-    .then(weatherData => {
-        if(weatherData) {
-            const capitalize = weatherData.address.charAt(0).toUpperCase() + weatherData.address.slice(1).toLowerCase();
-            document.getElementById('location-heading').innerHTML = capitalize
-        } else {
-            console.error('Error with location heading')
         }
     })
 }
