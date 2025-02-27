@@ -18,24 +18,25 @@ function todayWeather() {
     .then(weatherData => {
         if(weatherData && weatherData.days[0]) {
             const weatherIconsPath = './images/weather-icons/'
+            const todayHi = weatherData.days[0].tempmax
+            const todayLow = weatherData.days[0].tempmin
+            const todayAverageTemp = Math.round((todayHi + todayLow) / 2)
             const todayIconPath = weatherIconsPath + weatherData.days[0].icon + '.svg';
             const tonightIconPath = weatherIconsPath + weatherData.days[0].hours[20].icon + '.svg';
             //date
             document.getElementById('todays-date').innerText = weatherData.days[0].datetime
             //today
             document.getElementById('today-desc').innerText = weatherData.days[0].conditions;
-            document.getElementById('today-temp').innerText = weatherData.days[0].temp
+            document.getElementById('today-temp').innerText = todayAverageTemp
             document.getElementById('today-icon').src = todayIconPath
             //tonight
             document.getElementById('tonight-desc').innerText = weatherData.days[0].hours[20].conditions
-            document.getElementById('tonight-temp').innerText = weatherData.days[0].hours[20].temp
+            document.getElementById('tonight-temp').innerText = Math.round(weatherData.days[0].hours[20].temp)
             document.getElementById('tonight-icon').src = tonightIconPath
            
         } else {
             console.error('Error with weather data')
         }
-    }).catch(error => {
-        console.error('Error fetching data: ', error);
     })
 }
 
@@ -46,10 +47,8 @@ function locationHeading() {
             const capitalize = weatherData.address.charAt(0).toUpperCase() + weatherData.address.slice(1).toLowerCase();
             document.getElementById('location-heading').innerHTML = capitalize
         } else {
-            console.error('Error with weather data')
+            console.error('Error with location heading')
         }
-    }).catch(error => {
-        console.error('Error fetching data: ', error)
     })
 }
 
@@ -59,10 +58,8 @@ function currentWeather() {
         if(weatherData) {
             document.getElementById('current-time').innerText = weatherData.currentConditions.datetime
         } else {
-            console.error('error with weather data')
+            console.error('Error with current weather')
         }
-    }).catch(error => {
-        console.error('Error fetching data: ', error)
     })
 }
 
