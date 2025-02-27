@@ -22,7 +22,7 @@ function todayWeather() {
             const todayLow = weatherData.days[0].tempmin
             const todayAverageTemp = Math.round((todayHi + todayLow) / 2)
             const todayIconPath = weatherIconsPath + weatherData.days[0].icon + '.svg';
-            const tonightIconPath = weatherIconsPath + weatherData.days[0].hours[20].icon + '.svg';
+            const tomorrowIconPath = weatherIconsPath + weatherData.days[1].icon + '.svg';
             //date
             document.getElementById('todays-date').innerText = weatherData.days[0].datetime
             //today
@@ -31,8 +31,8 @@ function todayWeather() {
             document.getElementById('today-icon').src = todayIconPath
             //tonight
             document.getElementById('tonight-desc').innerText = weatherData.days[0].hours[20].conditions
-            document.getElementById('tonight-temp').innerText = Math.round(weatherData.days[0].hours[20].temp)
-            document.getElementById('tonight-icon').src = tonightIconPath
+            document.getElementById('tonight-temp').innerText = Math.round(weatherData.days[1].temp)
+            document.getElementById('tonight-icon').src = tomorrowIconPath
            
         } else {
             console.error('Error with weather data')
