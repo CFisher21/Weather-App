@@ -4,7 +4,7 @@ const weatherIconsPath = './images/weather-icons/'
 function fetchData() {
     const toronto = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/toronto?unitGroup=us&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json';
     const cochrane = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/cochrane%20alberta?unitGroup=metric&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json';
-    return fetch(toronto, { mode: 'cors'})
+    return fetch(cochrane, { mode: 'cors'})
         .then((response) => {
            if(!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`)
