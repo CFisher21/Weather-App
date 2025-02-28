@@ -98,3 +98,13 @@
     width: 60px;
     margin-right: 8px;
 }
+
+.user-controls {
+  display: flex;
+  flex-direction: row;
+  margin: 16px;
+}
+
+#submit {
+  height: 28px;
+}

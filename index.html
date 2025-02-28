@@ -10,6 +10,23 @@
   </head>
   <body>
     <div class="container">
+      <form class="user-controls">
+        <div class="search-div">
+          <input type="text" id="search-box" placeholder="Enter city name" autocomplete="off">
+          <ul id="suggestions"></ul>
+        </div>
+        <button id="submit">Search</button>
+        <label>
+          <input type="radio" name="unit" value="Metric" checked>Metic 
+        </label>
+        <label>
+          <input type="radio" name="unit" value="US">US
+        </label>
+        <label>
+          <input type="radio" name="unit" value="UK">UK
+        </label>
+      </form>
+      
         <h1 id="location-heading"></h1>
 
       <div class="today-weather-group">
