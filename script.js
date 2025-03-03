@@ -1,15 +1,28 @@
-// Global variables
+let weatherCache = {};
 const weatherIconsPath = "./images/weather-icons/";
 const suggestionsList = document.getElementById("suggestions");
 const submitButton = document.getElementById("submit");
 const searchBox = document.getElementById("search-box");
 const radioUnit = document.querySelectorAll('input[name=unit]');
-let weatherCache = null;
+
+function getWeatherData(query, unitGroup) {
+  const cacheKey = `${query}-${unitGroup}`;
+  if (weatherCache[cacheKey]) {
+    console.log("Using cached data for", cacheKey);
+    return Promise.resolve(weatherCache[cacheKey]);
+  } else {
+    return fetchData(query, unitGroup).then((data) => {
+      weatherCache[cacheKey] = data;
+      return data;
+    });
+  }
+}
 
 //Function to hit api (fetch)
 function fetchData(query, unitGroup) {
-  const searchTerm = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${query}?unitGroup=${unitGroup}&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json`;
-  return fetch(searchTerm, { mode: "cors" })
+  const searchTerm1 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${query}?unitGroup=${unitGroup}&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json`;
+  const searchTerm2 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${query}?unitGroup=${unitGroup}&key=RLJXSY3WNACR2L3FD8PKBBEJP&contentType=json`
+  return fetch(searchTerm2, { mode: "cors" })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -21,217 +34,121 @@ function fetchData(query, unitGroup) {
     });
 }
 
-// Function to fetch city suggestions
-async function fetchCities(query) {
-  await fetch(
-    `https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1`
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      suggestionsList.innerText = "";
-      data.forEach((place) => {
-        const listItem = document.createElement("li");
-        let key = place.addresstype
-        const city = place.address[key]
-        const state = place.address.state || "Unknown State";
-        const country = place.address.country || "Unknown Country";
-        const locData = `${city} ` + `${state} ` + `${country} `;
-        listItem.innerText = locData;
-        suggestionsList.appendChild(listItem);
-        listItem.addEventListener('click', () => {
-            searchBox.value = listItem.innerText
-        })
-      });
-    }).catch((error) => {console.error( 'Fetching cities failed: ', error)})
-}
 
-function changeMetric() {
-  const tempUnits = document.querySelectorAll('.temp-unit');
-  const speedUnits  = document.querySelectorAll('.speed-unit');
-  const currentLoc = document.getElementById('location-heading').innerText;
-
-  tempUnits.forEach(tempunit => {
-  // Remove any non-digit (and period, minus) characters at the end of the string
-    tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + 'C°'
-  })
-
-  speedUnits.forEach(speedunit => {
-    speedunit.innerText = speedunit.innerText.replace(/[^\d.-]+$/, '') + ' km';
-  });
-
-  locationHeading(currentLoc, 'metric');
-  todayWeather(currentLoc, 'metric');
-  currentWeather(currentLoc, 'metric');
-}
-
-function changeUS() {
-  const tempUnits = document.querySelectorAll('.temp-unit');
-  const speedUnits  = document.querySelectorAll('.speed-unit');
-  const currentLoc = document.getElementById('location-heading').innerText;
-
-  tempUnits.forEach(tempunit => {
-    // Remove any non-digit (and period, minus) characters at the end of the string
-      tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + 'F°'
-    })
+function updateWeather(query, unitGroup) {
+    getWeatherData(query, unitGroup).then((weatherData) => {
+      if (weatherData) {
+        // Update location heading
+        document.getElementById("location-heading").innerText = weatherData.resolvedAddress;
+        
+        // Update today's weather UI
+        if (weatherData.days[0]) {
+          const todayHi = weatherData.days[0].tempmax;
+          const todayLow = weatherData.days[0].tempmin;
+          const todayAverageTemp = Math.round((todayHi + todayLow) / 2);
+          const todayIconPath = weatherIconsPath + weatherData.days[0].icon + ".svg";
+          const tomorrowIconPath = weatherIconsPath + weatherData.days[1].icon + ".svg";
+          
+          document.getElementById("todays-date").innerText = weatherData.days[0].datetime;
+          document.getElementById("today-desc").innerText = weatherData.days[0].conditions;
+          document.getElementById("today-avrg-temp").innerText = todayAverageTemp;
+          document.getElementById("today-avrg-icon").src = todayIconPath;
+          document.getElementById("tm-desc").innerText = weatherData.days[0].hours[20].conditions;
+          document.getElementById("tm-temp").innerText = Math.round(weatherData.days[1].temp);
+          document.getElementById("tm-icon").src = tomorrowIconPath;
+        }
+        
+        // Update current weather UI
+        const currentTime = weatherData.currentConditions.datetime;
+        const twelveHourTime = convertTo12Hour(currentTime);
+        const currentWeatherIcon = weatherIconsPath + weatherData.currentConditions.icon + ".svg";
+        document.getElementById("visib").innerText = weatherData.currentConditions.visibility;
+        document.getElementById("wind-gusts").innerText = Math.round(weatherData.currentConditions.windgust);
+        document.getElementById("wind").innerText = Math.round(weatherData.currentConditions.windspeed);
+        document.getElementById("current-time").innerText = twelveHourTime;
+        document.getElementById("today-icon").src = currentWeatherIcon;
+        document.getElementById("today-temp").innerText = Math.round(weatherData.currentConditions.temp);
+        document.getElementById("today-real-feel").innerText = Math.round(weatherData.currentConditions.feelslike);
+        
+        // Now update the UI for units
+        if (unitGroup === 'metric') {
+          applyMetricUnits();
+        } else if (unitGroup === 'us') {
+          applyUSUnits();
+        } else {
+          applyUKUnits();
+        }
+      } else {
+        console.error("Error fetching weather data");
+      }
+    });
+  }
   
+
+  function applyMetricUnits() {
+    const tempUnits = document.querySelectorAll('.temp-unit');
+    const speedUnits = document.querySelectorAll('.speed-unit');
+    
+    tempUnits.forEach(tempunit => {
+      tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + ' C°';
+    });
+    
+    speedUnits.forEach(speedunit => {
+      speedunit.innerText = speedunit.innerText.replace(/[^\d.-]+$/, '') + ' km';
+    });
+  }
+  
+  function applyUSUnits() {
+    const tempUnits = document.querySelectorAll('.temp-unit');
+    const speedUnits = document.querySelectorAll('.speed-unit');
+    
+    tempUnits.forEach(tempunit => {
+      tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + ' F°';
+    });
+    
     speedUnits.forEach(speedunit => {
       speedunit.innerText = speedunit.innerText.replace(/[^\d.-]+$/, '') + ' mi';
     });
-
-    locationHeading(currentLoc, 'us');
-    todayWeather(currentLoc, 'us');
-    currentWeather(currentLoc, 'us');
-}
-
-function changeUK() {
-  const tempUnits = document.querySelectorAll('.temp-unit');
-  const speedUnits  = document.querySelectorAll('.speed-unit');
-  const currentLoc = document.getElementById('location-heading').innerText;
-
-  tempUnits.forEach(tempunit => {
-    // Remove any non-digit (and period, minus) characters at the end of the string
-      tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + 'C°'
-    })
+  }
   
+  function applyUKUnits() {
+    // Assuming UK uses Celsius for temperature and miles for wind speed, adjust as needed
+    const tempUnits = document.querySelectorAll('.temp-unit');
+    const speedUnits = document.querySelectorAll('.speed-unit');
+    
+    tempUnits.forEach(tempunit => {
+      tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + ' C°';
+    });
+    
     speedUnits.forEach(speedunit => {
       speedunit.innerText = speedunit.innerText.replace(/[^\d.-]+$/, '') + ' mi';
     });
-
-    locationHeading(currentLoc, 'uk');
-    todayWeather(currentLoc, 'uk');
-    currentWeather(currentLoc, 'uk');
-}
-
-
-// Event listener for radio buttons to change units
-radioUnit.forEach(radio => {
-  radio.addEventListener('change', (event) => {
-    if(event.target.value === 'metric') {
-      changeMetric()
-    } else if (event.target.value === 'us') {
-      changeUS()
-    } else {
-      changeUK()
-    }
-  })
-})
-
-
-// Event listener for input changes
-searchBox.addEventListener("input", () => {
-    setTimeout(() => {
-        const query = searchBox.value.trim();
-        fetchCities(query);
-    }, 1000)
+  }
   
-});
 
-submitButton.addEventListener("click", (event) => {
-  event.preventDefault();
-
-  const searchBox = document.getElementById("search-box");
-  const currentRadio = document.querySelector('input[name="unit"]:checked');
-
-  const unitGroup = currentRadio.value;
-  const query = searchBox.value.trim();
-
-  todayWeather(query, unitGroup);
-  locationHeading(query, unitGroup);
-  currentWeather(query, unitGroup);
-});
-
-function locationHeading(query, unitGroup) {
-  fetchData(query, unitGroup).then((weatherData) => {
-    if (weatherData) {
-      //const capitalize = weatherData.address.charAt(0).toUpperCase() + weatherData.address.slice(1).toLowerCase();
-      document.getElementById("location-heading").innerHTML =
-        weatherData.resolvedAddress;
-    } else {
-      console.error("Error with location heading");
-    }
+  submitButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    
+    const currentRadio = document.querySelector('input[name="unit"]:checked');
+    const unitGroup = currentRadio.value;
+    const query = searchBox.value.trim();
+    
+    updateWeather(query, unitGroup);
   });
-}
+  
 
-function todayWeather(query, unitGroup) {
-  fetchData(query, unitGroup).then((weatherData) => {
-    if (weatherData && weatherData.days[0]) {
+  radioUnit.forEach(radio => {
+    radio.addEventListener('change', (event) => {
       const currentRadio = document.querySelector('input[name="unit"]:checked');
-      const todayHi = weatherData.days[0].tempmax;
-      const todayLow = weatherData.days[0].tempmin;
-      const todayAverageTemp = Math.round((todayHi + todayLow) / 2);
-      const todayIconPath =
-        weatherIconsPath + weatherData.days[0].icon + ".svg";
-      const tomorrowIconPath =
-        weatherIconsPath + weatherData.days[1].icon + ".svg";
-      //date
-      document.getElementById("todays-date").innerText =
-        weatherData.days[0].datetime;
-      //today
-      document.getElementById("today-desc").innerText =
-        weatherData.days[0].conditions;
-      document.getElementById("today-avrg-temp").innerText = todayAverageTemp;
-      document.getElementById("today-avrg-icon").src = todayIconPath;
-      //tonight
-      document.getElementById("tm-desc").innerText =
-        weatherData.days[0].hours[20].conditions;
-      document.getElementById("tm-temp").innerText = Math.round(
-        weatherData.days[1].temp
-      );
-      document.getElementById("tm-icon").src = tomorrowIconPath;
-
-      if(currentRadio.value === 'metric') {
-        changeMetric()
-      } else if(currentRadio.value === 'us') {
-        changeUS()
-      } else {
-        changeUK();
-      }
-    } else {
-      console.error("Error with weather data");
-    }
+      const unitGroup = currentRadio.value;
+      const currentLocation = document.getElementById('location-heading').innerText;
+      // Re-use the existing query (currentLocation) with the new unitGroup
+      updateWeather(currentLocation, unitGroup);
+    });
   });
-}
+  
 
-function currentWeather(query, unitGroup) {
-  fetchData(query, unitGroup).then((weatherData) => {
-    if (weatherData) {
-      const currentRadio = document.querySelector('input[name="unit"]:checked');
-      const currentTime = weatherData.currentConditions.datetime;
-      const twelveHourTime = convertTo12Hour(currentTime);
-      const currentWeatherIcon =
-        weatherIconsPath + weatherData.currentConditions.icon + ".svg";
-
-      document.getElementById("visib").innerText =
-        weatherData.currentConditions.visibility;
-      document.getElementById("wind-gusts").innerText = Math.round(
-        weatherData.currentConditions.windgust
-      );
-      document.getElementById("wind").innerText = Math.round(
-        weatherData.currentConditions.windspeed
-      );
-      document.getElementById("current-time").innerText = twelveHourTime;
-      document.getElementById("today-icon").src = currentWeatherIcon;
-      document.getElementById("today-temp").innerText = Math.round(
-        weatherData.currentConditions.temp
-      );
-      document.getElementById("today-real-feel").innerText = Math.round(
-        weatherData.currentConditions.feelslike
-      );
-
-      if(currentRadio.value === 'metric') {
-        changeMetric()
-      } else if(currentRadio.value === 'us') {
-        changeUS()
-      } else {
-        changeUK();
-      }
-    } else {
-      console.error("Error with current weather");
-    }
-  });
-}
-
-// Convert 24hr clock to 12hr clock
+  // Convert 24hr clock to 12hr clock
 function convertTo12Hour(time24) {
   // Split the time string (e.g., "14:30") into hours and minutes
   const [hourStr, minuteStr] = time24.split(":");
@@ -247,16 +164,3 @@ function convertTo12Hour(time24) {
   // Return the formatted time
   return `${hour}:${minute} ${period}`;
 }
-
-// THIS FUNCTION TO BE REMOVED AFTER DEVELOPMENT
-fetchData('cochrane', 'metric').then((weatherData) => {
-  console.log("Weather Data: ", weatherData);
-  console.log("day 0: ", weatherData.days[0]);
-  console.log("hour 20: ", weatherData.days[0].hours[20]);
-});
-
-todayWeather('cochrane alberta', 'metric');
-currentWeather('cochrane alberta', 'metric');
-locationHeading('cochrane alberta', 'metric');
-
-// Add a loading screen from when the form is hit to when the api is displayed on the page
