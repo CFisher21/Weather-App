@@ -3,10 +3,12 @@ const weatherIconsPath = "./images/weather-icons/";
 const suggestionsList = document.getElementById("suggestions");
 const submitButton = document.getElementById("submit");
 const searchBox = document.getElementById("search-box");
+const radioUnit = document.querySelectorAll('input[name=unit]');
+let weatherCache = null;
 
 //Function to hit api (fetch)
-function fetchData(query) {
-  const searchTerm = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${query}?unitGroup=metric&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json`;
+function fetchData(query, unitGroup) {
+  const searchTerm = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${query}?unitGroup=${unitGroup}&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json`;
   return fetch(searchTerm, { mode: "cors" })
     .then((response) => {
       if (!response.ok) {
@@ -40,8 +42,80 @@ async function fetchCities(query) {
             searchBox.value = listItem.innerText
         })
       });
-    });
+    }).catch((error) => {console.error( 'Fetching cities failed: ', error)})
 }
+
+function changeMetric() {
+  const tempUnits = document.querySelectorAll('.temp-unit');
+  const speedUnits  = document.querySelectorAll('.speed-unit');
+  const currentLoc = document.getElementById('location-heading').innerText;
+
+  tempUnits.forEach(tempunit => {
+  // Remove any non-digit (and period, minus) characters at the end of the string
+    tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + 'C°'
+  })
+
+  speedUnits.forEach(speedunit => {
+    speedunit.innerText = speedunit.innerText.replace(/[^\d.-]+$/, '') + ' km';
+  });
+
+  locationHeading(currentLoc, 'metric');
+  todayWeather(currentLoc, 'metric');
+  currentWeather(currentLoc, 'metric');
+}
+
+function changeUS() {
+  const tempUnits = document.querySelectorAll('.temp-unit');
+  const speedUnits  = document.querySelectorAll('.speed-unit');
+  const currentLoc = document.getElementById('location-heading').innerText;
+
+  tempUnits.forEach(tempunit => {
+    // Remove any non-digit (and period, minus) characters at the end of the string
+      tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + 'F°'
+    })
+  
+    speedUnits.forEach(speedunit => {
+      speedunit.innerText = speedunit.innerText.replace(/[^\d.-]+$/, '') + ' mi';
+    });
+
+    locationHeading(currentLoc, 'us');
+    todayWeather(currentLoc, 'us');
+    currentWeather(currentLoc, 'us');
+}
+
+function changeUK() {
+  const tempUnits = document.querySelectorAll('.temp-unit');
+  const speedUnits  = document.querySelectorAll('.speed-unit');
+  const currentLoc = document.getElementById('location-heading').innerText;
+
+  tempUnits.forEach(tempunit => {
+    // Remove any non-digit (and period, minus) characters at the end of the string
+      tempunit.innerText = tempunit.innerText.replace(/[^\d.-]+$/, '') + 'C°'
+    })
+  
+    speedUnits.forEach(speedunit => {
+      speedunit.innerText = speedunit.innerText.replace(/[^\d.-]+$/, '') + ' mi';
+    });
+
+    locationHeading(currentLoc, 'uk');
+    todayWeather(currentLoc, 'uk');
+    currentWeather(currentLoc, 'uk');
+}
+
+
+// Event listener for radio buttons to change units
+radioUnit.forEach(radio => {
+  radio.addEventListener('change', (event) => {
+    if(event.target.value === 'metric') {
+      changeMetric()
+    } else if (event.target.value === 'us') {
+      changeUS()
+    } else {
+      changeUK()
+    }
+  })
+})
+
 
 // Event listener for input changes
 searchBox.addEventListener("input", () => {
@@ -53,17 +127,21 @@ searchBox.addEventListener("input", () => {
 });
 
 submitButton.addEventListener("click", (event) => {
-  const searchBox = document.getElementById("search-box");
-  console.log(searchBox.value);
   event.preventDefault();
+
+  const searchBox = document.getElementById("search-box");
+  const currentRadio = document.querySelector('input[name="unit"]:checked');
+
+  const unitGroup = currentRadio.value;
   const query = searchBox.value.trim();
-  todayWeather(query);
-  locationHeading(query);
-  currentWeather(query);
+
+  todayWeather(query, unitGroup);
+  locationHeading(query, unitGroup);
+  currentWeather(query, unitGroup);
 });
 
-function locationHeading(query) {
-  fetchData(query).then((weatherData) => {
+function locationHeading(query, unitGroup) {
+  fetchData(query, unitGroup).then((weatherData) => {
     if (weatherData) {
       //const capitalize = weatherData.address.charAt(0).toUpperCase() + weatherData.address.slice(1).toLowerCase();
       document.getElementById("location-heading").innerHTML =
@@ -74,9 +152,10 @@ function locationHeading(query) {
   });
 }
 
-function todayWeather(query) {
-  fetchData(query).then((weatherData) => {
+function todayWeather(query, unitGroup) {
+  fetchData(query, unitGroup).then((weatherData) => {
     if (weatherData && weatherData.days[0]) {
+      const currentRadio = document.querySelector('input[name="unit"]:checked');
       const todayHi = weatherData.days[0].tempmax;
       const todayLow = weatherData.days[0].tempmin;
       const todayAverageTemp = Math.round((todayHi + todayLow) / 2);
@@ -99,15 +178,24 @@ function todayWeather(query) {
         weatherData.days[1].temp
       );
       document.getElementById("tm-icon").src = tomorrowIconPath;
+
+      if(currentRadio.value === 'metric') {
+        changeMetric()
+      } else if(currentRadio.value === 'us') {
+        changeUS()
+      } else {
+        changeUK();
+      }
     } else {
       console.error("Error with weather data");
     }
   });
 }
 
-function currentWeather(query) {
-  fetchData(query).then((weatherData) => {
+function currentWeather(query, unitGroup) {
+  fetchData(query, unitGroup).then((weatherData) => {
     if (weatherData) {
+      const currentRadio = document.querySelector('input[name="unit"]:checked');
       const currentTime = weatherData.currentConditions.datetime;
       const twelveHourTime = convertTo12Hour(currentTime);
       const currentWeatherIcon =
@@ -129,6 +217,14 @@ function currentWeather(query) {
       document.getElementById("today-real-feel").innerText = Math.round(
         weatherData.currentConditions.feelslike
       );
+
+      if(currentRadio.value === 'metric') {
+        changeMetric()
+      } else if(currentRadio.value === 'us') {
+        changeUS()
+      } else {
+        changeUK();
+      }
     } else {
       console.error("Error with current weather");
     }
@@ -153,18 +249,14 @@ function convertTo12Hour(time24) {
 }
 
 // THIS FUNCTION TO BE REMOVED AFTER DEVELOPMENT
-fetchData().then((weatherData) => {
+fetchData('cochrane', 'metric').then((weatherData) => {
   console.log("Weather Data: ", weatherData);
   console.log("day 0: ", weatherData.days[0]);
   console.log("hour 20: ", weatherData.days[0].hours[20]);
 });
 
-todayWeather();
-locationHeading();
-currentWeather();
-//Function to process the api
-
-//Form for user to get weather based on location
+todayWeather('cochrane alberta', 'metric');
+currentWeather('cochrane alberta', 'metric');
+locationHeading('cochrane alberta', 'metric');
 
 // Add a loading screen from when the form is hit to when the api is displayed on the page
-

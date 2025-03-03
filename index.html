@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather App</title>
-    <script defer src="script.js"></script>
+    <script defer src="cache.js"></script>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/x-icon" href="./images/favicon.svg" />
   </head>
@@ -17,13 +17,13 @@
         </div>
         <button id="submit">Search</button>
         <label>
-          <input type="radio" name="unit" value="Metric" checked>Metic 
+          <input type="radio" name="unit" value="metric" checked>Metic 
         </label>
         <label>
-          <input type="radio" name="unit" value="US">US
+          <input type="radio" name="unit" value="us">US
         </label>
         <label>
-          <input type="radio" name="unit" value="UK">UK
+          <input type="radio" name="unit" value="uk">UK
         </label>
       </form>
       
@@ -39,13 +39,13 @@
             <div class="today-group">
               <img src="" alt="" id="today-avrg-icon" class="icon" />
               <p id="today-desc"></p>
-              <span id="today-avrg-temp"></span>
+              <span id="today-avrg-temp" class="temp-unit"></span>
             </div>
             <p>Tomorrow: </p>
             <div class="tm-group">
               <img src="" alt="" id="tm-icon" class="icon" />
               <p id="tm-desc"></p>
-              <span id="tm-temp"></span>
+              <span id="tm-temp" class="temp-unit"></span>
           </div>
         </div>
       </div>
@@ -59,21 +59,21 @@
         <div class="current-left-group">
             <img src="" alt="" id="today-icon" class="big-icon">
             <div class="right-group">
-                <span id="today-temp" class="big-temp"></span>
+                <span id="today-temp" class="big-temp temp-unit"></span>
                 <div class="row">
                     <p>Real Feel: </p>
-                    <span id="today-real-feel"></span>
+                    <span id="today-real-feel" class="temp-unit"></span>
                 </div>
             </div>
         </div>
         <div class="current-right-group">
             <div class="right-group-2">
                 <p>Wind</p>
-                <span id="wind"></span>
+                <span id="wind" class="speed-unit"></span>
             </div>
             <div class="right-group-2">
                 <p>Wind Gusts</p>
-                <span id="wind-gusts"></span>
+                <span id="wind-gusts" class="speed-unit"></span>
             </div>
             <div class="right-group-2">
                 <p>Visibilty</p>
