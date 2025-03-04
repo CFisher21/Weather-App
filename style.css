@@ -31,7 +31,7 @@
 .today-weather-group, .current-weather {
   margin: 16px;
   padding: 8px;
-  width: 400px;
+  width: 800px;
   border: 2px solid black;
   border-radius: 4px;
 }
@@ -115,25 +115,24 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 400px;
-  margin-top: 16px;
+  width: 800px;
+  margin: 16px;
   padding: 8px;
 }
 
 .hourly-weather > p {
-  
   border-bottom: 2px solid black;
   width: 100%;
 }
 
 .hourly {
   display: flex;
-  width: 384px;
+  width: 784px;
   overflow: auto;
 }
 
 .hours-container > img {
-  width: 48px;
+  width: 32px;
 }
 
 .hours-container > p {
@@ -146,4 +145,40 @@
   padding: 16px;
   min-width: 100px;
   justify-content: space-between;
+}
+
+.tenday > div > img {
+  width: 32px;
+} 
+
+.tendayforecast {
+  border: 2px solid black;
+  margin-top: 16px;
+  border-radius: 4px;
+  width: 800px;
+  padding: 8px;
+}
+
+.tendayforecast > p {
+  border-bottom: 2px solid black;
+}
+
+.tenday-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 8px;
+  height: 40px;
+}
+
+.tenday-container > img {
+  margin-right: 16px;
+}
+
+.ten-day-date { 
+  margin-right: 16px;
+}
+
+.ten-day-temp {
+  margin-right: 16px;
 }

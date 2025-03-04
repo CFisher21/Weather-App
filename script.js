@@ -88,7 +88,8 @@ function updateWeather(query, unitGroup) {
             icon.alt = hour.icon;
 
             const temp = document.createElement('p');
-            temp.innerText = hour.temp;
+            roundedTemp = Math.round(hour.temp)
+            temp.innerText = roundedTemp;
             temp.className = 'temp-unit'
 
             const precip = document.createElement('p');
@@ -103,6 +104,53 @@ function updateWeather(query, unitGroup) {
             hourly.appendChild(container)
             
           })
+        }
+
+        //10 Day weather forecast
+        const tenDayContainer = document.getElementById('10day');
+        if(weatherData.days) {
+          let counter = 0
+          weatherData.days.forEach((day) => {
+            
+            if(counter <= 9) {
+              const container = document.createElement('div');
+              const date = document.createElement('p');
+              const icon = document.createElement('img');
+              const temp = document.createElement('p');
+              const desc = document.createElement('p');
+              const precip = document.createElement('p');
+
+              container.className = "tenday-container"
+
+              const createDate = new Date(`${day.datetime}T00:00:00`);
+              const formattedDate = createDate.toLocaleDateString('en-CA', { day: '2-digit', month: 'short' });
+              date.innerText = formattedDate;
+              date.classList = 'ten-day-date'
+
+              icon.src = weatherIconsPath + day.icon + '.svg';
+
+              const roundedTemp = Math.round(day.temp)
+              temp.innerText = roundedTemp;
+              temp.classList = 'ten-day-temp temp-unit'
+
+              desc.innerText = day.description;
+              precip.innter = day.precip + '%'
+
+              container.appendChild(date)
+              container.appendChild(icon)
+              container.appendChild(temp)
+              container.appendChild(desc)
+              container.appendChild(precip)
+
+              tenDayContainer.appendChild(container);
+              counter++
+            }
+            
+            
+          })
+          
+
+          
         }
 
         // Now update the UI for units
