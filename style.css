@@ -108,3 +108,42 @@
 #submit {
   height: 28px;
 }
+
+.hourly-weather {
+  border: 2px solid black;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 400px;
+  margin-top: 16px;
+  padding: 8px;
+}
+
+.hourly-weather > p {
+  
+  border-bottom: 2px solid black;
+  width: 100%;
+}
+
+.hourly {
+  display: flex;
+  width: 384px;
+  overflow: auto;
+}
+
+.hours-container > img {
+  width: 48px;
+}
+
+.hours-container > p {
+  font-size: 12px;
+}
+
+.hours-container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  min-width: 100px;
+  justify-content: space-between;
+}

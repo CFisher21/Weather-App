@@ -39,6 +39,7 @@ function updateWeather(query, unitGroup) {
     getWeatherData(query, unitGroup).then((weatherData) => {
       if (weatherData) {
         // Update location heading
+        console.log(weatherData)
         document.getElementById("location-heading").innerText = weatherData.resolvedAddress;
         
         // Update today's weather UI
@@ -70,6 +71,40 @@ function updateWeather(query, unitGroup) {
         document.getElementById("today-temp").innerText = Math.round(weatherData.currentConditions.temp);
         document.getElementById("today-real-feel").innerText = Math.round(weatherData.currentConditions.feelslike);
         
+        // Hourly Weather 
+        const hourly = document.getElementById('hourly')
+        if(weatherData.days[0].hours[0]) {
+          weatherData.days[0].hours.forEach((hour) => {
+            
+            const container = document.createElement('div');
+            container.className = 'hours-container'
+
+            const time = document.createElement('p'); 
+            const convertedTime = convertTo12Hour(hour.datetime);
+            time.innerText = convertedTime;
+
+            const icon = document.createElement('img');
+            icon.src = weatherIconsPath + hour.icon + '.svg';
+            icon.alt = hour.icon;
+
+            const temp = document.createElement('p');
+            temp.innerText = hour.temp;
+            temp.className = 'temp-unit'
+
+            const precip = document.createElement('p');
+            roundedPrecip = Math.round(hour.precip)
+            precip.innerText = roundedPrecip + '%'
+
+            container.appendChild(time)
+            container.appendChild(icon)
+            container.appendChild(temp)
+            container.appendChild(precip)
+
+            hourly.appendChild(container)
+            
+          })
+        }
+
         // Now update the UI for units
         if (unitGroup === 'metric') {
           applyMetricUnits();
@@ -163,4 +198,26 @@ function convertTo12Hour(time24) {
 
   // Return the formatted time
   return `${hour}:${minute} ${period}`;
+}
+
+// Get the users current location to show local weather data
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude.toString();
+      const longi = position.coords.longitude.toString();
+
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${longi}&format=json`)
+        .then(response => response.json())
+        .then(data => {
+          updateWeather(data.display_name, 'metric');
+        });
+
+    },
+    (error) => {
+      console.error("Error obtaining location", error);
+    }
+  );
+} else {
+  console.log("Geolocation is not supported by this browser.");
 }

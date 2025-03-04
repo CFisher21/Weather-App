@@ -12,78 +12,86 @@
     <div class="container">
       <form class="user-controls">
         <div class="search-div">
-          <input type="text" id="search-box" placeholder="Enter city name" autocomplete="off">
+          <input
+            type="text"
+            id="search-box"
+            placeholder="Enter city name"
+            autocomplete="off"
+          />
           <ul id="suggestions"></ul>
         </div>
         <button id="submit">Search</button>
         <label>
-          <input type="radio" name="unit" value="metric" checked>Metic 
+          <input type="radio" name="unit" value="metric" checked />Metic
         </label>
-        <label>
-          <input type="radio" name="unit" value="us">US
-        </label>
-        <label>
-          <input type="radio" name="unit" value="uk">UK
-        </label>
+        <label> <input type="radio" name="unit" value="us" />US </label>
+        <label> <input type="radio" name="unit" value="uk" />UK </label>
       </form>
-      
-        <h1 id="location-heading"></h1>
+
+      <h1 id="location-heading"></h1>
 
       <div class="today-weather-group">
         <div class="top-group">
           <p>Today's Weather</p>
           <span id="todays-date"></span>
         </div>
-          <div class="todays-weather">
-            <p>Average: </p>
-            <div class="today-group">
-              <img src="" alt="" id="today-avrg-icon" class="icon" />
-              <p id="today-desc"></p>
-              <span id="today-avrg-temp" class="temp-unit"></span>
-            </div>
-            <p>Tomorrow: </p>
-            <div class="tm-group">
-              <img src="" alt="" id="tm-icon" class="icon" />
-              <p id="tm-desc"></p>
-              <span id="tm-temp" class="temp-unit"></span>
+        <div class="todays-weather">
+          <p>Average:</p>
+          <div class="today-group">
+            <img src="" alt="" id="today-avrg-icon" class="icon" />
+            <p id="today-desc"></p>
+            <span id="today-avrg-temp" class="temp-unit"></span>
+          </div>
+          <p>Tomorrow:</p>
+          <div class="tm-group">
+            <img src="" alt="" id="tm-icon" class="icon" />
+            <p id="tm-desc"></p>
+            <span id="tm-temp" class="temp-unit"></span>
           </div>
         </div>
       </div>
 
       <div class="current-weather">
         <div class="current-top-group">
-            <p>Current Weather</p>
-            <span id="current-time"></span>
+          <p>Current Weather</p>
+          <span id="current-time"></span>
         </div>
         <div class="current-main">
-        <div class="current-left-group">
-            <img src="" alt="" id="today-icon" class="big-icon">
+          <div class="current-left-group">
+            <img src="" alt="" id="today-icon" class="big-icon" />
             <div class="right-group">
-                <span id="today-temp" class="big-temp temp-unit"></span>
-                <div class="row">
-                    <p>Real Feel: </p>
-                    <span id="today-real-feel" class="temp-unit"></span>
-                </div>
+              <span id="today-temp" class="big-temp temp-unit"></span>
+              <div class="row">
+                <p>Real Feel:</p>
+                <span id="today-real-feel" class="temp-unit"></span>
+              </div>
             </div>
+          </div>
+          <div class="current-right-group">
+            <div class="right-group-2">
+              <p>Wind</p>
+              <span id="wind" class="speed-unit"></span>
+            </div>
+            <div class="right-group-2">
+              <p>Wind Gusts</p>
+              <span id="wind-gusts" class="speed-unit"></span>
+            </div>
+            <div class="right-group-2">
+              <p>Visibilty</p>
+              <div class="row">
+                <span id="visib"></span>
+                <p>%</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="current-right-group">
-            <div class="right-group-2">
-                <p>Wind</p>
-                <span id="wind" class="speed-unit"></span>
-            </div>
-            <div class="right-group-2">
-                <p>Wind Gusts</p>
-                <span id="wind-gusts" class="speed-unit"></span>
-            </div>
-            <div class="right-group-2">
-                <p>Visibilty</p>
-                <div class="row">
-                    <span id="visib"></span>
-                    <p>%</p>
-                </div>
-            </div>
-            </div>
+      </div>
+      <div class="hourly-weather" id="hourly-weather">
+        <p>Hourly Weather</p>
+        <div class="hourly" id="hourly">
+
         </div>
+        
       </div>
     </div>
   </body>
