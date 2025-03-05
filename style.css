@@ -10,6 +10,39 @@
   width: 32px;
 }
 
+.search-div {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+#suggestions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  padding: 8px;
+  z-index: 1;
+}
+
+#suggestions > li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+  border-right: 2px solid black;
+  border-left: 2px solid black ;
+  height: 40px;
+  padding: 8px;
+  background-color: white;
+  width: 100%;
+  text-align: center;
+}
+
+
 .today-group,
 .tm-group,
 .todays-weather,
@@ -245,6 +278,9 @@ input[type="radio"]:checked::before {
 @media (max-width: 600px) {
   .today-weather-group, .current-weather, .hourly-weather, .tendayforecast {
     width: 400px;
+    margin: 0;
+    margin-top: 16px;
+    margin-bottom: 16px;
   }
 
   .hourly {
@@ -261,6 +297,27 @@ input[type="radio"]:checked::before {
   }
 
   #search-box {
-    width: 400px;
+    width: 350px;
+  }
+
+  #suggestions > li {
+    min-height: 44px;
+    font-size: 12px;
+  }
+
+  #submit {
+    height: 44px;
+    width: 100px;
+  }
+
+  .radio-button {
+    scale: 2;
+    margin-right: 16px;
+  }
+
+  .radio-group {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
   }
 }

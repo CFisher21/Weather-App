@@ -35,6 +35,66 @@ function fetchData(query, unitGroup) {
 }
 
 
+function getCities(query) {
+  return fetch(`https://photon.komoot.io/api/?q=${query}&limit=5`)
+  .then((response) => {
+    if(!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+    return response.json();
+  })
+  .catch((error) => {
+    console.log('Fetch error: ', error);
+  })
+}
+
+function suggestCities() {
+  getCities().then((citydata) => {
+      console.log(citydata)
+  })
+}
+
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
+const handleInput = debounce(() => {
+  const query = searchBox.value.trim();
+  suggestionsList.innerHTML = '';
+
+  if (query.length === 0) return;
+
+  getCities(query)
+    .then((data) => {
+      if (data && data.features) {
+        data.features.forEach((item) => {
+          const li = document.createElement('li');
+          const country = item.properties.country;
+          const city = item.properties.name;
+          const state = item.properties.state;
+          const searchString = `${city} ${state} ${country}`
+          li.innerText = searchString;
+          li.addEventListener('click', () => {
+            searchBox.value = searchString;
+            suggestionsList.innerHTML = '';
+          });
+          suggestionsList.appendChild(li);
+        });
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching city data:', error);
+    });
+}, 300); // Adjust delay as needed
+
+searchBox.addEventListener('input', handleInput);
+
 function updateWeather(query, unitGroup) {
     getWeatherData(query, unitGroup).then((weatherData) => {
       if (weatherData) {
@@ -73,6 +133,7 @@ function updateWeather(query, unitGroup) {
         
         // Hourly Weather 
         const hourly = document.getElementById('hourly')
+        hourly.innerHTML = '';
         if(weatherData.days[0].hours[0]) {
           weatherData.days[0].hours.forEach((hour) => {
             
@@ -108,6 +169,7 @@ function updateWeather(query, unitGroup) {
 
         //10 Day weather forecast
         const tenDayContainer = document.getElementById('10day');
+        tenDayContainer.innerHTML = '';
         if(weatherData.days) {
           let counter = 0
           weatherData.days.forEach((day) => {
@@ -145,12 +207,7 @@ function updateWeather(query, unitGroup) {
               tenDayContainer.appendChild(container);
               counter++
             }
-            
-            
           })
-          
-
-          
         }
 
         // Now update the UI for units
@@ -269,3 +326,5 @@ if ("geolocation" in navigator) {
 } else {
   console.log("Geolocation is not supported by this browser.");
 }
+
+suggestCities();
