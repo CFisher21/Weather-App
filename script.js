@@ -20,7 +20,6 @@ function getWeatherData(query, unitGroup) {
 
 //Function to hit api (fetch)
 function fetchData(query, unitGroup) {
-  const searchTerm1 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${query}?unitGroup=${unitGroup}&key=73ESG77VMVDHZPHKQ9YL7FNH4&contentType=json`;
   const searchTerm2 = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${query}?unitGroup=${unitGroup}&key=RLJXSY3WNACR2L3FD8PKBBEJP&contentType=json`
   return fetch(searchTerm2, { mode: "cors" })
     .then((response) => {
@@ -196,7 +195,7 @@ function updateWeather(query, unitGroup) {
               temp.classList = 'ten-day-temp temp-unit'
 
               desc.innerText = day.description;
-              precip.innter = day.precip + '%'
+              precip.innerText = day.precip + '%'
 
               container.appendChild(date)
               container.appendChild(icon)
