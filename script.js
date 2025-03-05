@@ -195,7 +195,10 @@ function updateWeather(query, unitGroup) {
               temp.classList = 'ten-day-temp temp-unit'
 
               desc.innerText = day.description;
-              precip.innerText = day.precip + '%'
+              desc.className = 'tenday-desc'
+              
+              const roundedPrecip = Math.round(day.precip)
+              precip.innerText = roundedPrecip + '%'
 
               container.appendChild(date)
               container.appendChild(icon)

@@ -277,14 +277,14 @@ input[type="radio"]:checked::before {
 
 @media (max-width: 600px) {
   .today-weather-group, .current-weather, .hourly-weather, .tendayforecast {
-    width: 400px;
+    width: 350px;
     margin: 0;
     margin-top: 16px;
     margin-bottom: 16px;
   }
 
   .hourly {
-    width: 386px;
+    width: 334px;
   }
 
   #location-heading {
@@ -319,5 +319,13 @@ input[type="radio"]:checked::before {
     display: flex;
     justify-content: space-between;
     width: 80%;
+  }
+
+  .tenday-container {
+    height: 80px;
+  }
+
+  .tenday-desc {
+    font-size: 12px;
   }
 }
