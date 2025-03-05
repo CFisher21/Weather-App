@@ -101,8 +101,10 @@
 
 .user-controls {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   margin: 16px;
+  justify-content: center;
+  align-items: center;
 }
 
 #submit {
@@ -181,4 +183,84 @@
 
 .ten-day-temp {
   margin-right: 16px;
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 32px;
+}
+
+#search-box {
+  height: 44px;
+  width: 400px;
+  margin: 16px;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.radio-group {
+  margin: 16px;
+  display: flex;
+ 
+}
+
+label {
+  display: flex;
+  justify-content: center;
+  margin: 8px;
+}
+
+.radio-button {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #007bff;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+input[type="radio"]:checked {
+  background-color: #007bff;
+}
+
+input[type="radio"]:checked::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+@media (max-width: 600px) {
+  .today-weather-group, .current-weather, .hourly-weather, .tendayforecast {
+    width: 400px;
+  }
+
+  .hourly {
+    width: 386px;
+  }
+
+  #location-heading {
+    font-size: 24px;
+  }
+
+  footer {
+    margin: 0;
+    margin-top: 32px;
+  }
+
+  #search-box {
+    width: 400px;
+  }
 }
